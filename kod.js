@@ -104,7 +104,7 @@ const nextLevelButton = document.getElementById("nextLevel")
 let settings = {
   minlen: 1,
   maxlen: 10,
-  speed: 1.5,
+  speed: 4,
   mode: "categories",
   modeSett: ["nums", "punct", "lett"],
   lettString: true,
@@ -299,9 +299,12 @@ const canvas = document.getElementById("canvas")
 const ctx = canvas.getContext("2d")
 
 //paramters
-const stationWidth = 60
-const stationHeight = 45
-const rocketWidth = 50
+const stationWidth = 150
+const stationHeight = 100
+const rocketWidth = 125
+const explWidthMultiplier = 80
+const fallingFont = "35px NunitoMedium"
+const stationFont = "60px NunitoMedium"
 //creating rocket
 const rocketImg = new Image()
 rocketImg.src = "images/raketa.png"
@@ -338,7 +341,7 @@ for (let i=1; i<=4;i++){
 let clouds = []
 function newCloud (starter=false){
   const im = cloudImgs.randomE()
-  const h = 20+Math.random()*canvas.width*0.02
+  const h = 50 + Math.random()*canvas.width*0.02
   const left = Math.random() < 0.5
   clouds.push({
     src: im,
@@ -380,7 +383,7 @@ function drawRotatedImage (img, x, y, w, h, r){
 }
 
 function moving(){
-  ctx.font = "14px NunitoMedium"
+  ctx.font = fallingFont
   //move words
   currentWords.forEach(cw => {
     cw.y += settings.speed/2
@@ -390,7 +393,7 @@ function moving(){
       //generate explosion
       const missedWord = cw.done + cw.toType
       const wordWidth = ctx.measureText(missedWord).width
-      const explWidth = Math.sqrt(missedWord.length)*20
+      const explWidth = Math.pow(missedWord.length, 1/3)*explWidthMultiplier
       newExplosion(cw.x + (wordWidth-explWidth)/2, explWidth)
     }
   })
@@ -450,13 +453,13 @@ function draw() {
   ctx.fillRect(canvas.width/2-stationWidth/2, canvas.height-stationHeight, stationWidth, stationHeight)
   ctx.fillStyle = getComputedStyle(canvas).getPropertyValue("--alabaster")
   //draw lastletter
-  ctx.font = "24px NunitoMedium"
+  ctx.font = stationFont
   const metrics =  ctx.measureText(lastLetter)
   const llx = canvas.width/2 - metrics.width/2
   const lly = canvas.height - (metrics.actualBoundingBoxDescent)-10//metrics.actualBoundingBoxAscent +
   ctx.fillText(lastLetter, llx, lly)
   //draw words
-  ctx.font = "14px NunitoMedium"
+  ctx.font = fallingFont
   currentWords.filter(cw => !cw.removed).forEach(cw => {
     ctx.fillStyle = getComputedStyle(canvas).getPropertyValue("--delftBlue")
     ctx.fillText(cw.done, cw.x, cw.y)
