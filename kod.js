@@ -92,13 +92,6 @@ function onKeyPress(e) {
   }
 }
 
-function rocketHit(ro){
-  const aw = ro.goal
-  changeVar("score", aw.done.length)
-  aw.removed = true
-  rockets = rockets.filter(r=> r != ro)
-}
-
 //settings----------------------------------------------------------------------
 const showSettButton = document.getElementById("showSett")
 const settCloseButton = document.getElementById("settClose")
@@ -327,6 +320,12 @@ const staticRocket = {
   r: -Math.PI/2,
   goal: undefined
 }
+function rocketHit(ro){
+  const aw = ro.goal
+  changeVar("score", aw.done.length)
+  aw.removed = true
+  rockets = rockets.filter(r=> r != ro)
+}
 
 //creating clouds
 let newImg
@@ -395,14 +394,14 @@ function moving(){
       newExplosion(cw.x + (wordWidth-explWidth)/2, explWidth)
     }
   })
-
   //move rockets
-  rockets.forEach(ro => {
-    dx = (ro.goal.x + ctx.measureText(ro.goal).width/2) - ro.x
+  rockets.forEach(function (ro) {
+    dx = (ro.goal.x + ctx.measureText(ro.goal.done + ro.goal.toType).width/2) - ro.x
     dy = ro.goal.y - ro.y
     dist =  Math.sqrt(dx*dx + dy*dy)
     if (dist<20){
       rocketHit(ro)
+      return
     }
     ro.r =  Math.asin(dy/dist)
     if (dx < 0){
