@@ -163,11 +163,7 @@ for (let i=0;i<levelnames.length;i++){
 }
 
 //functions
-function changeWordSettings (args){
-  for (const key in settings){
-    if (args.hasOwnProperty(key))
-      settings[key] = args[key]
-  }
+function filterTaskList(){
   switch (settings.mode) {
     case "categories":
       feladatok = settings.modeSett.map(i => categories[i]).flat()
@@ -201,12 +197,42 @@ function changeWordSettings (args){
   }
 }
 
-function showSett(){
-  settWindow.style.display = "block"
-  const inps = document.querySelectorAll(".settImp")
-  for (let i=0; i<inps.length;i++){
-    inps[i].value = settings[inps[i].name]
+function changeWordSettings (args){
+  for (const key in settings){
+    if (args.hasOwnProperty(key))
+      settings[key] = args[key]
   }
+  return filterTaskList()
+}
+
+function syncrnosizeSettWindow(){
+  const inps = document.querySelectorAll(".settImp")
+  const toChange = {}
+  inps.forEach(v=> {v.value = settings[v.name]})
+  document.querySelectorAll(".settCheck").forEach(item=> {
+    item.checked = settings[item.name]
+  })
+  document.querySelectorAll(".mode").forEach(item => {
+    item.checked = false
+  })
+  document.getElementById(settings.mode+"RB").checked = true
+  switch (settings.mode) {
+    case "categories":
+      settings.modeSett.forEach(item => {document.getElementById(item+"Check").checked = true})
+      break;
+    case "levels":
+       document.querySelector("#levelsDiv select").value = settings.modeSett
+      break;
+    case "custom":
+       document.querySelector("#customDiv input").value = settings.modeSett
+      break;
+    default:
+      console.log("Valami rossz :(")
+  }
+}
+function showSett(){
+  syncrnosizeSettWindow()
+  settWindow.style.display = "block"
 }
 
 function closeSett(){
@@ -289,8 +315,8 @@ levelSelector.addEventListener("change", disableChangeLevelButtons)
 
 //initialize settings
 changeLevel(0, fix=true)
-saveSett()
-//---------------------------------------------------------------------------------should syncrnosize settings tab with the var on first load
+syncrnosizeSettWindow()
+filterTaskList()
 changeModOpsOpacity()
 
 //canvas------------------------------------------------------------------------
@@ -301,13 +327,14 @@ const ctx = canvas.getContext("2d")
 const stationWidth = 150
 const stationHeight = 100
 const rocketWidth = 125
+let rocketHeight = 25
 const explWidthMultiplier = 80
 const fallingFont = "35px NunitoMedium"
 const stationFont = "60px NunitoMedium"
 //creating rocket
 const rocketImg = new Image()
 rocketImg.src = "images/raketa.png"
-const rocketHeight = rocketWidth * rocketImg.naturalHeight/rocketImg.naturalWidth
+rocketImg.onload = ()=>rocketHeight = rocketWidth * rocketImg.naturalHeight/rocketImg.naturalWidth
 function newRocket(goal){
   rockets.push({
     x: canvas.width/2,
@@ -352,7 +379,7 @@ function newCloud (starter=false){
     speed: 0.05 + Math.random() * (left? 0.7:-0.7)
   })
 }
-for (let i=0; i<10; i++) newCloud(starter=true)
+cloudImgs[cloudImgs.length-1].onload = () => {for (let i=0; i<10; i++) newCloud(starter=true)}
 
 //creating explosions
 let explImg = []
