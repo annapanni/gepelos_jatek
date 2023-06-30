@@ -27,10 +27,11 @@ Array.prototype.randomE = function () {
   return this[Math.floor((Math.random()*this.length))]
 }
 
-function changeVar(name, v, fix=false, disp=true){
-  if (fix) globalVars[name]=v
+function changeVar(name, v, spec){
+  s = {fix: false, disp: true, ...spec}
+  if (s.fix) globalVars[name]=v
   else globalVars[name]+=v
-  if (disp)
+  if (s.disp)
     displays[name].obj.innerText = displays[name].label + globalVars[name]
 }
 
@@ -365,6 +366,7 @@ let cloudImgs = []
 for (let i=1; i<=4;i++){
   newImg = new Image()
   newImg.src = `images/felho${i}.png`
+  newImg.style.opacity = 0.2
   cloudImgs.push(newImg)
 }
 let clouds = []
@@ -377,11 +379,12 @@ function newCloud (starter=false){
     width: h*im.naturalWidth/im.naturalHeight,
     height: h,
     x: (starter ? Math.random()*canvas.width : (left? 0 - h*im.naturalWidth/im.naturalHeight :canvas.width)),
-    y: Math.pow(Math.random(),5)*canvas.height,
-    speed: 0.05 + Math.random() * (left? 0.7:-0.7)
+    y: Math.pow(Math.random(),4)*canvas.height*0.95,
+    speed: 0.05 + Math.random() * (left? 0.7:-0.7),
+    opacity: 0.6 + Math.random()*0.4
   })
 }
-cloudImgs[cloudImgs.length-1].onload = () => {for (let i=0; i<10; i++) newCloud(starter=true)}
+cloudImgs[cloudImgs.length-1].onload = () => {for (let i=0; i<20; i++) newCloud(starter=true)}
 
 //creating explosions
 let explImg = []
@@ -404,11 +407,14 @@ function newExplosion(x,w){
 }
 
 //functions
-function drawRotatedImage (img, x, y, w, h, r){
+function advancedDrawImage (img, x, y, w, h, spec){
+  s = {r:0, a:1, ...spec}
+  ctx.globalAlpha = s.a
   ctx.setTransform(1, 0, 0, 1, x, y)
-  ctx.rotate(r)
+  ctx.rotate(s.r)
   ctx.drawImage(img, -w/2, -h/2, w, h)
   ctx.setTransform(1, 0, 0, 1, 0, 0)
+  ctx.globalAlpha = 1
 }
 
 function moving(){
@@ -470,12 +476,12 @@ function draw() {
   ctx.clearRect(0,0, canvas.width, canvas.height)
   //draw clouds
   clouds.forEach(c => {
-    ctx.drawImage(c.src, c.x, c.y, c.width, c.height)
+    advancedDrawImage(c.src, c.x, c.y, c.width, c.height, {a: c.opacity})
   })
   //draw rockets
-  drawRotatedImage(rocketImg, staticRocket.x, staticRocket.y, rocketWidth, rocketHeight, staticRocket.r)
+  advancedDrawImage(rocketImg, staticRocket.x, staticRocket.y, rocketWidth, rocketHeight, {r: staticRocket.r})
   rockets.forEach(ro => {
-    drawRotatedImage(rocketImg, ro.x, ro.y, rocketWidth, rocketHeight, ro.r)
+    advancedDrawImage(rocketImg, ro.x, ro.y, rocketWidth, rocketHeight, {r: ro.r})
   })
   //draw rocket station
   ctx.fillStyle = getComputedStyle(canvas).getPropertyValue("--delftBlue")
@@ -507,9 +513,9 @@ setInterval(draw, 30)
 //start game--------------------------------------------------------------------
 const newGameButton = document.getElementById("newGame")
 function initialize(){
-  changeVar("errors", 0, fix=true)
-  changeVar("score", 0, fix=true)
-  changeVar("finished", 0, fix=true)
+  changeVar("errors", 0, {fix: true})
+  changeVar("score", 0, {fix: true})
+  changeVar("finished", 0, {fix:true})
   currentWords = []
   lastLetter = ""
   activeWordIndex = undefined
