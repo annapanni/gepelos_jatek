@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="hu" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+    <title></title>
+  </head>
+  <body>
+    <canvas id="canvas" class="centered" width="800" height="600"></canvas>
+    <div class="centered">
+      <p id="scoreBox"></p>
+      <p id="errorsBox"></p>
+      <p id="finishedBox"></p>
+      <button type="button" id="newGame" onkeyup="event.preventDefault()">Új játék</button>
+    </div>
+    <button type="button" id="showSett">Beállítások</button>
+    <div id="settings">
+      <button type="button" id="settClose" class="settFLoatRight">×</button>
+      <div id="settings_content">
+        <p>Sebesség:
+          <select class="settImp" name="speed">
+            <option value="0.4">lassú</option>
+            <option value="1.5" selected>közepes</option>
+            <option value="3">gyors</option>
+          </select>
+        </p>
+        <p>Minimum hossz: <input type="number" class="num_inp settImp" name="minlen"></p>
+        <p>Maximum hossz: <input type="number" class="num_inp settImp" name="maxlen"></p>
+        <p>
+          Módok:
+          <input type="checkbox" name="lettString" id="lettStringCheck" class="settCheck" >
+          <label for="lettString">karaktersorozatok</label>
+          <input type="checkbox" name="words" id="wordsCheck" class="settCheck">
+          <label for="wordsCheck">szavak</label>
+        </p>
+        <p>Használható karakterek:</p>
+          <div id="modesContainer">
+            <input type="radio" name="mode" class="mode" value="categories" id="categoriesRB">
+            <label for="categoriesRB">kategóriák: </label>
+            <div id="categoriesDiv" class="modeOps">
+              <input type="checkbox" name="nums" id="numsCheck">
+              <label for="numsCheck">számok</label>
+              <input type="checkbox" name="punct" id="punctCheck">
+              <label for="punctCheck">írásjelek</label>
+              <input type="checkbox" name="lett" id="lettCheck">
+              <label for="lettCheck">betűk</label>
+            </div>
+            <br>
+            <input type="radio" name="mode" class="mode" value="levels" id="levelsRB">
+            <label for="levelsRB">leckék: </label>
+            <div id="levelsDiv" class="modeOps">
+              <button type="button" id="prevLevel" class="changeLevel">←</button>
+              <select name="" value="">
+                <!-- javascript generates options-->
+              </select>
+              <button type="button" id="nextLevel" class="changeLevel">→</button>
+            </div>
+            <br>
+            <input type="radio" name="mode" class="mode" value="custom" id="customRB">
+            <label for="customRB">egyéni: </label>
+            <div id="customDiv" class="modeOps">
+              <input type="text" name="chars">
+            </div>
+          </div>
+      </div>
+      <button type="button" id="settOK" class="settFLoatRight">OK</button>
+      <button type="button" id="settCancel" class="settFLoatRight">Mégse</button>
+    </div>
+
+
+     <script src='magyar-szavak.js'></script>
+     <script src="kod.js"></script>
+  </body>
+</html>

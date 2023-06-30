@@ -1,0 +1,114 @@
+:root{
+  --whiteSmoke: #F6F6F3;
+  --alabaster: #E3E4DB;
+  --pictonBlue: #66B8E1;
+  --delftBlue: #34435E;
+  --folly: #ee2e31;
+  --red: #EE2E31;
+}
+@font-face {
+  font-family: 'NunitoMedium';
+  src: url('Nunito-Medium.ttf');
+}
+body{
+  font-family: "NunitoMedium";
+  background-color: var(--alabaster);
+}
+canvas{
+  background-color: var(--pictonBlue);
+  border: 1px solid var(--delftBlue);
+}
+p{
+  margin-top: 5px;
+  margin-bottom: 1px;
+  padding: 2px;
+}
+button{
+  font-family: "NunitoMedium";
+  background-color: var(--delftBlue);
+  color: var(--alabaster);
+  border:none;
+  padding: 5px;
+  border-radius: 4px;
+}
+#newGame{
+  font-size: 18px;
+  padding: 10px;
+}
+#settings{
+  display: none;
+  position: absolute;
+  top: 50%;
+  left:  50%;
+  -webkit-transform:translate(-50%,-50%);
+  width: 50%;
+  max-width: 500px;
+  background-color: var(--whiteSmoke);
+  border: 1px solid var(--alabaster);
+  padding: 5px;
+  margin: auto;
+
+}
+#settings_content{
+  background-color: var(--whiteSmoke);
+  border: none;
+  margin: 0;
+  padding: 4%;
+}
+.settFLoatRight{
+  float: right;
+  margin: 5px;
+}
+
+#settClose{
+  font-size: 16px;
+  width: 30px;
+  height:30px;
+  background-color: var(--whiteSmoke);
+  color: var(--delftBlue);
+}
+.num_inp{
+  width: 45px;
+}
+#settings select{
+  background-color: var(--alabaster);
+  padding: 5px;
+  border: none;
+}
+#modesContainer{
+  padding-left: 3%;
+}
+.mode{
+  margin: 7px;
+}
+.modeOps{
+  display: inline-block;
+  padding-left: 3%;
+}
+.changeLevel{
+  background-color: var(--alabaster);
+  color: var(--delftBlue);
+  margin:0;
+}
+
+#settCancel{
+  background-color: var(--whiteSmoke);
+  border: 1px solid var(--delftBlue) ;
+  color:solid var(--delftBlue) ;
+}
+
+#showSett{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+.centered{
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  text-align: center;
+}
+
+.disabled{
+  opacity: 0.3;
+}
