@@ -1,3 +1,5 @@
+let gameRunning = false
+let wordTimeouts = []
 let lastLetter = ""
 const globalVars = {
   score: 0,
@@ -334,7 +336,7 @@ const stationFont = "60px NunitoMedium"
 //creating rocket
 const rocketImg = new Image()
 rocketImg.src = "images/raketa.png"
-rocketImg.onload = ()=>rocketHeight = rocketWidth * rocketImg.naturalHeight/rocketImg.naturalWidth
+rocketImg.onload = () => rocketHeight = rocketWidth * rocketImg.naturalHeight/rocketImg.naturalWidth
 function newRocket(goal){
   rockets.push({
     x: canvas.width/2,
@@ -513,21 +515,31 @@ function initialize(){
   activeWordIndex = undefined
   staticRocket.goal = undefined
   staticRocket.r = 1.5*Math.PI
+  wordTimeouts = []
 }
-function startGame() { //-----------------------------------------------------------needs some rewriting (eg. shouldnt be able to start multiple games)
-  initialize()
-  newWord()
-  for (let i=0; i<20; i++){
-    setTimeout(newWord, i*3000 + Math.random()*4000)
+function toggleGame() {
+  if (gameRunning){
+    for (let i=0; i<wordTimeouts.length; i++){
+      clearTimeout(wordTimeouts[i])
+    }
+    currentWords = []
+    rockets = []
+    gameRunning = false
+    newGameButton.textContent = "Új játék"
+  } else {
+    gameRunning = true
+    newGameButton.textContent = "Befejezés"
+    initialize()
+    newWord()
+    let time = 0
+    for (let i=0; i<20; i++){
+      time += 1000 + Math.random()*2000
+      wordTimeouts.push(setTimeout(newWord, time))
+    }
   }
-
-  //if (![...newGameButton.classList].includes("disabled")){
-  //  newGameButton.classList.add("disabled")
-  //    newGameButton.classList.remove("disabled")
-  //}
 }
 
-newGameButton.addEventListener("click", startGame)
+newGameButton.addEventListener("click", toggleGame)
 document.addEventListener("keypress", onKeyPress)
 
 initialize()
