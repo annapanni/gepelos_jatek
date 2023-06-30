@@ -410,11 +410,11 @@ function moving(){
     if (dx < 0){
       ro.r =  Math.PI - ro.r
     }
-    ro.x += Math.cos(ro.r)*15
-    ro.y += Math.sin(ro.r)*15
+    ro.x += Math.cos(ro.r)*20
+    ro.y += Math.sin(ro.r)*20
   })
   if (staticRocket.goal){
-    dx = (staticRocket.goal.x + ctx.measureText(staticRocket.goal).width/2) - staticRocket.x
+    dx = (staticRocket.goal.x + ctx.measureText(staticRocket.goal.done + staticRocket.goal.toType).width/2) - staticRocket.x
     dy = staticRocket.goal.y- staticRocket.y
     dist =  Math.sqrt(dx*dx + dy*dy)
     staticRocket.r = Math.asin(dy/dist)
