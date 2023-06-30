@@ -78,7 +78,6 @@ function onKeyPress(e) {
       aw.toType = aw.toType.substr(1, aw.toType.length)
       if (aw.toType.length == 0){
         activeWordIndex = undefined
-        staticRocket.goal = undefined
         newRocket(aw)
       }
     } else {
@@ -327,6 +326,7 @@ function rocketHit(ro){
   const aw = ro.goal
   changeVar("score", aw.done.length)
   aw.removed = true
+  if (staticRocket.goal==aw) staticRocket.goal = undefined
   rockets = rockets.filter(r=> r != ro)
 }
 
@@ -398,6 +398,15 @@ function moving(){
     }
   })
   //move rockets
+  if (staticRocket.goal){
+    dx = (staticRocket.goal.x + ctx.measureText(staticRocket.goal.done + staticRocket.goal.toType).width/2) - staticRocket.x
+    dy = staticRocket.goal.y- staticRocket.y
+    dist =  Math.sqrt(dx*dx + dy*dy)
+    let goalRotation = Math.asin(dy/dist)
+    if (dx < 0) goalRotation =  Math.PI - goalRotation
+    if (goalRotation<0) goalRotation =  2*Math.PI + goalRotation
+    staticRocket.r = staticRocket.r + (goalRotation-staticRocket.r)*0.5
+  }
   rockets.forEach(function (ro) {
     dx = (ro.goal.x + ctx.measureText(ro.goal.done + ro.goal.toType).width/2) - ro.x
     dy = ro.goal.y - ro.y
@@ -413,15 +422,6 @@ function moving(){
     ro.x += Math.cos(ro.r)*20
     ro.y += Math.sin(ro.r)*20
   })
-  if (staticRocket.goal){
-    dx = (staticRocket.goal.x + ctx.measureText(staticRocket.goal.done + staticRocket.goal.toType).width/2) - staticRocket.x
-    dy = staticRocket.goal.y- staticRocket.y
-    dist =  Math.sqrt(dx*dx + dy*dy)
-    staticRocket.r = Math.asin(dy/dist)
-    if (dx < 0){
-      staticRocket.r =  Math.PI - staticRocket.r
-    }
-  }
   //move clouds
   if (Math.random()<0.005){//chance of a new cloud appearing
     newCloud()
@@ -444,10 +444,10 @@ function draw() {
     ctx.drawImage(c.src, c.x, c.y, c.width, c.height)
   })
   //draw rockets
+  drawRotatedImage(rocketImg, staticRocket.x, staticRocket.y, rocketWidth, rocketHeight, staticRocket.r)
   rockets.forEach(ro => {
     drawRotatedImage(rocketImg, ro.x, ro.y, rocketWidth, rocketHeight, ro.r)
   })
-  drawRotatedImage(rocketImg, staticRocket.x, staticRocket.y, rocketWidth, rocketHeight, staticRocket.r)
   //draw rocket station
   ctx.fillStyle = getComputedStyle(canvas).getPropertyValue("--delftBlue")
   ctx.fillRect(canvas.width/2-stationWidth/2, canvas.height-stationHeight, stationWidth, stationHeight)
@@ -456,7 +456,7 @@ function draw() {
   ctx.font = stationFont
   const metrics =  ctx.measureText(lastLetter)
   const llx = canvas.width/2 - metrics.width/2
-  const lly = canvas.height - (metrics.actualBoundingBoxDescent)-10//metrics.actualBoundingBoxAscent +
+  const lly = canvas.height - (metrics.actualBoundingBoxDescent)-25
   ctx.fillText(lastLetter, llx, lly)
   //draw words
   ctx.font = fallingFont
@@ -485,7 +485,7 @@ function initialize(){
   lastLetter = ""
   activeWordIndex = undefined
   staticRocket.goal = undefined
-  staticRocket.r = -Math.PI/2
+  staticRocket.r = 1.5*Math.PI
 }
 function startGame() { //-----------------------------------------------------------needs some rewriting (eg. shouldnt be able to start multiple games)
   initialize()
