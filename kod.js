@@ -358,6 +358,10 @@ function rocketHit(ro){
   aw.removed = true
   if (staticRocket.goal==aw) staticRocket.goal = undefined
   rockets = rockets.filter(r=> r != ro)
+  ctx.font = fallingFont
+  const awWidth = ctx.measureText(aw.done).width
+  const explWidth = Math.pow(aw.done.length, 1/2)*explWidthMultiplier
+  newExplosion(aw.x + (awWidth-explWidth)/2, ["center", aw.y], explWidth, "circular")
 }
 
 //creating clouds
@@ -387,21 +391,33 @@ function newCloud (starter=false){
 cloudImgs[cloudImgs.length-1].onload = () => {for (let i=0; i<20; i++) newCloud(starter=true)}
 
 //creating explosions
-let explImg = []
-for (let i=1; i<=8;i++){
-  newImg = new Image()
-  newImg.src = `images/robb${i}.png`
-  explImg.push(newImg)
+let explImgs = {
+  mushroom: [],
+  circular: []
 }
-for (let i=1; i<=4;i++) explImg.push(newImg)
+for (let type in explImgs){
+  for (let i=1; i<=8;i++){
+    newImg = new Image()
+    newImg.src = `images/${type}${i}.png`
+    explImgs[type].push(newImg)
+  }
+  for (let i=1; i<=4;i++) explImgs[type].push(newImg)
+}
 let explosions = []
-function newExplosion(x,w){
+function newExplosion(x,y,w,t){
+  const h = w * explImgs[t][0].naturalHeight/explImgs[t][0].naturalWidth
+  if (y=="bottom")
+    y = canvas.height - h
+  else if (y[0] == "center")
+    y = y[1] - h/2
+  else y = y
   explosions.push({
+    type: t,
     srcIndex: 0,
     x:x,
-    y:canvas.height - (w * explImg[0].naturalHeight/explImg[0].naturalWidth),
+    y: y,
     width: w,
-    height: w * explImg[0].naturalHeight/explImg[0].naturalWidth,
+    height: h,
     back: false
   })
 }
@@ -429,7 +445,7 @@ function moving(){
       const missedWord = cw.done + cw.toType
       const wordWidth = ctx.measureText(missedWord).width
       const explWidth = Math.pow(missedWord.length, 1/3)*explWidthMultiplier
-      newExplosion(cw.x + (wordWidth-explWidth)/2, explWidth)
+      newExplosion(cw.x + (wordWidth-explWidth)/2, "bottom", explWidth, "mushroom")
     }
   })
   //move rockets
@@ -467,7 +483,7 @@ function moving(){
   //move explosions
   explosions.forEach(e => {
     e.srcIndex += (e.back? -2: 1)
-    if (e.srcIndex==11) e.back = true
+    if (e.srcIndex==(explImgs[e.type].length-1)) e.back = true
   })
   explosions = explosions.filter(e=>e.srcIndex>0)
 }
@@ -503,7 +519,7 @@ function draw() {
   })
   //draw explsoions
   explosions.forEach(expl => {
-    ctx.drawImage(explImg[expl.srcIndex], expl.x, expl.y, expl.width, expl.height)
+    ctx.drawImage(explImgs[expl.type][expl.srcIndex], expl.x, expl.y, expl.width, expl.height)
   })
 }
 
