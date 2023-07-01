@@ -246,6 +246,7 @@ function syncrnosizeSettWindow(){
       console.log("Valami rossz :(")
   }
 }
+
 function showSett(){
   syncrnosizeSettWindow()
   settWindow.style.display = "block"
@@ -351,6 +352,8 @@ const stationWidth = 150
 const stationHeight = 100
 const rocketWidth = 125
 let rocketHeight = 25
+const avgCloudHeight = 60
+const avgTreeHeight = 100
 const explWidthMultiplier = 80
 const fallingFont = "35px NunitoMedium"
 const stationFont = "60px NunitoMedium"
@@ -392,13 +395,12 @@ let cloudImgs = []
 for (let i=1; i<=4;i++){
   newImg = new Image()
   newImg.src = `images/felho${i}.png`
-  newImg.style.opacity = 0.2
   cloudImgs.push(newImg)
 }
 let clouds = []
 function newCloud (starter=false){
   const im = cloudImgs.randomE()
-  const h = 50 + Math.random()*canvas.width*0.02
+  const h = avgCloudHeight + (Math.random()-0.5)*canvas.width*0.02
   const left = Math.random() < 0.5
   clouds.push({
     src: im,
@@ -411,6 +413,27 @@ function newCloud (starter=false){
   })
 }
 cloudImgs[cloudImgs.length-1].onload = () => {for (let i=0; i<20; i++) newCloud(starter=true)}
+//creating trees
+let treeImgs = []
+for (let i=1; i<=9;i++){
+  newImg = new Image()
+  newImg.src = `images/tree${i}.png`
+  treeImgs.push(newImg)
+}
+let trees = []
+function newTree (){
+  const im = treeImgs.randomE()
+  const h = avgTreeHeight + (Math.random()-0.5)*canvas.width*0.05
+  const w = h*im.naturalWidth/im.naturalHeight
+  trees.push({
+    src: im,
+    width: w,
+    height: h,
+    x: Math.random()*canvas.width,
+    y: canvas.height - h/2
+  })
+}
+treeImgs[treeImgs.length-1].onload = () => {for (let i=0; i<40; i++) newTree(starter=true)}
 
 //creating explosions
 let explImgs = {
@@ -524,6 +547,10 @@ function draw() {
   advancedDrawImage(rocketImg, staticRocket.x, staticRocket.y, rocketWidth, rocketHeight, {r: staticRocket.r})
   rockets.forEach(ro => {
     advancedDrawImage(rocketImg, ro.x, ro.y, rocketWidth, rocketHeight, {r: ro.r})
+  })
+  //draw trees
+  trees.forEach(t => {
+    advancedDrawImage(t.src, t.x, t.y, t.width, t.height)
   })
   //draw rocket station
   ctx.fillStyle = getComputedStyle(canvas).getPropertyValue("--delftBlue")
