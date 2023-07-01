@@ -107,6 +107,8 @@ let settings = {
   minlen: 1,
   maxlen: 10,
   speed: 4,
+  newWordSpeed: 1500,
+  wordsPerGame: 20,
   mode: "categories",
   modeSett: ["nums", "punct", "lett"],
   lettString: true,
@@ -553,11 +555,10 @@ function toggleGame() {
     gameRunning = true
     newGameButton.textContent = "Befejezés"
     initialize()
-    newWord()
     let time = 0
-    for (let i=0; i<20; i++){
-      time += 1500 + Math.random()*2500
+    for (let i=0; i<settings.wordsPerGame; i++){
       wordTimeouts.push(setTimeout(newWord, time))
+      time += +settings.newWordSpeed + Math.random()*2500
     }
   }
 }

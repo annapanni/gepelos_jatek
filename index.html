@@ -26,8 +26,16 @@
             <option value="7.5">gyors</option>
           </select>
         </p>
-        <p>Minimum hossz: <input type="number" class="num_inp settImp" name="minlen"></p>
-        <p>Maximum hossz: <input type="number" class="num_inp settImp" name="maxlen"></p>
+        <p>Keletkezési sebesség:
+          <select class="settImp" name="newWordSpeed">
+            <option value="2500">lassú</option>
+            <option value="1500" selected>közepes</option>
+            <option value="800">gyors</option>
+          </select>
+        </p>
+        <p>Szavak száma jétékonként: <input type="number" class="num_inp settImp" name="wordsPerGame"></p>
+        <p>Minimum szóhossz: <input type="number" class="num_inp settImp" name="minlen"></p>
+        <p>Maximum szóhossz: <input type="number" class="num_inp settImp" name="maxlen"></p>
         <p>
           Módok:
           <input type="checkbox" name="lettString" id="lettStringCheck" class="settCheck" >
