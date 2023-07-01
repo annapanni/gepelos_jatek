@@ -437,6 +437,28 @@ function newTree (){
   })
 }
 treeImgs[treeImgs.length-1].onload = () => {for (let i=0; i<40; i++) newTree(starter=true)}
+let burningTreeImgs = []
+for (let i=1; i<=2;i++){
+  newImg = new Image()
+  newImg.src = `images/burning_tree${i}.png`
+  burningTreeImgs.push(newImg)
+}
+let burnedTreeImgs = []
+for (let i=1; i<=2;i++){
+  newImg = new Image()
+  newImg.src = `images/burnt_tree${i}.png`
+  burnedTreeImgs.push(newImg)
+}
+function burnTrees(fromx, tox){
+  trees.forEach(t => {
+    if (fromx < (t.x + t.width/2) && (t.x + t.width/2) < tox){
+      if (treeImgs.includes(t.src))
+        t.src = burningTreeImgs.randomE()
+      else if (burningTreeImgs.includes(t.src))
+        t.src = burnedTreeImgs.randomE()
+    }
+  })
+}
 
 //creating explosions
 let explImgs = {
@@ -454,11 +476,12 @@ for (let type in explImgs){
 let explosions = []
 function newExplosion(x,y,w,t){
   const h = w * explImgs[t][0].naturalHeight/explImgs[t][0].naturalWidth
-  if (y=="bottom")
+  if (y=="bottom") {
     y = canvas.height - h
+    burnTrees(x, x+w)
+  }
   else if (y[0] == "center")
     y = y[1] - h/2
-  else y = y
   explosions.push({
     type: t,
     srcIndex: 0,
