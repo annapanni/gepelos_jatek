@@ -349,7 +349,7 @@ function newRocket(goal){
 const staticRocket = {
   x: canvas.width/2,
   y: canvas.height - stationHeight,
-  r: -Math.PI/2,
+  r: 1.5*Math.PI,
   goal: undefined
 }
 function rocketHit(ro){
@@ -449,15 +449,16 @@ function moving(){
     }
   })
   //move rockets
+  let goalRotation = 1.5*Math.PI
   if (staticRocket.goal){
     dx = (staticRocket.goal.x + ctx.measureText(staticRocket.goal.done + staticRocket.goal.toType).width/2) - staticRocket.x
     dy = staticRocket.goal.y- staticRocket.y
     dist =  Math.sqrt(dx*dx + dy*dy)
-    let goalRotation = Math.asin(dy/dist)
+    goalRotation = Math.asin(dy/dist)
     if (dx < 0) goalRotation =  Math.PI - goalRotation
     if (goalRotation<0) goalRotation =  2*Math.PI + goalRotation
-    staticRocket.r = staticRocket.r + (goalRotation-staticRocket.r)*0.5
   }
+  staticRocket.r = staticRocket.r + (goalRotation-staticRocket.r)*0.5
   rockets.forEach(function (ro) {
     dx = (ro.goal.x + ctx.measureText(ro.goal.done + ro.goal.toType).width/2) - ro.x
     dy = ro.goal.y - ro.y
@@ -555,7 +556,7 @@ function toggleGame() {
     newWord()
     let time = 0
     for (let i=0; i<20; i++){
-      time += 1000 + Math.random()*2000
+      time += 1500 + Math.random()*2500
       wordTimeouts.push(setTimeout(newWord, time))
     }
   }
