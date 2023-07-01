@@ -40,10 +40,16 @@ button{
   .content {
     height: 90%;
   }
+  body{
+    padding-top: 4vh;
+  }
 }
 @media (max-aspect-ratio: 4/3) {
   .content {
     width: 90%;
+  }
+  body{
+    padding-top: 4vw;
   }
 }
 canvas{
@@ -68,6 +74,14 @@ canvas{
 #newGame{
   font-size: 16px;
 }
+#showSett{
+  font-size: 20px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  opacity: 0.9;
+}
+
 #settings{
   display: none;
   position: absolute;
@@ -130,12 +144,6 @@ canvas{
   color:solid var(--delftBlue) ;
 }
 
-#showSett{
-  font-size: 18px;
-  position: absolute;
-  right: 10px;
-  top: 10px;
-}
 .centered{
   margin-left: auto;
   margin-right: auto;
