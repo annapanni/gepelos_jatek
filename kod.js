@@ -72,6 +72,7 @@ function onKeyPress(e) {
       findNewActive(e.key)
       if (activeWordIndex==undefined) {
         changeVar("errors",1)
+        missedShotAudio.cloneNode(true).play()
         return
       }
     }
@@ -79,12 +80,14 @@ function onKeyPress(e) {
     if (e.key == aw.toType[0]){
       aw.done +=  aw.toType[0]
       aw.toType = aw.toType.substr(1, aw.toType.length)
+      shotAudio.cloneNode(true).play()
       if (aw.toType.length == 0){
         activeWordIndex = undefined
         newRocket(aw)
       }
     } else {
       changeVar("errors",1)
+      missedShotAudio.cloneNode(true).play()
       aw.toType = aw.done + aw.toType
       aw.done = ""
       activeWordIndex = undefined
@@ -324,6 +327,13 @@ syncrnosizeSettWindow()
 filterTaskList()
 changeModOpsOpacity()
 
+//audios------------------------------------------------------------------------
+const rocketLaunchAudio = new Audio("sounds/rocket.mp3")
+const largeExplosionAudio = new Audio("sounds/large_explosion.mp3")
+const shortExplosionAudio = new Audio("sounds/short_explosion.mp3")
+const shotAudio = new Audio("sounds/shot_quiet.mp3")
+const missedShotAudio = new Audio("sounds/empty_shot.mp3")
+
 //canvas------------------------------------------------------------------------
 const canvas = document.getElementById("canvas")
 const ctx = canvas.getContext("2d")
@@ -341,6 +351,7 @@ const rocketImg = new Image()
 rocketImg.src = "images/raketa.png"
 rocketImg.onload = () => rocketHeight = rocketWidth * rocketImg.naturalHeight/rocketImg.naturalWidth
 function newRocket(goal){
+  rocketLaunchAudio.cloneNode(true).play()
   rockets.push({
     x: canvas.width/2,
     y: canvas.height - stationHeight,
@@ -355,6 +366,7 @@ const staticRocket = {
   goal: undefined
 }
 function rocketHit(ro){
+  shortExplosionAudio.cloneNode(true).play()
   const aw = ro.goal
   changeVar("score", aw.done.length)
   aw.removed = true
@@ -448,6 +460,7 @@ function moving(){
       const wordWidth = ctx.measureText(missedWord).width
       const explWidth = Math.pow(missedWord.length, 1/3)*explWidthMultiplier
       newExplosion(cw.x + (wordWidth-explWidth)/2, "bottom", explWidth, "mushroom")
+      largeExplosionAudio.cloneNode(true).play()
     }
   })
   //move rockets
