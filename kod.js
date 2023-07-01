@@ -69,33 +69,35 @@ function findNewActive(l){
 
 function onKeyPress(e) {
   if (settWindow.style.display != "block"){
-    lastLetter = e.key
-    if (activeWordIndex==undefined){
-      findNewActive(e.key)
-      if (activeWordIndex==undefined) {
-        changeVar("errors",1)
-        missedShotAudio.cloneNode(true).play()
-        return
+      lastLetter = e.key
+      if (gameRunning) {
+        if (activeWordIndex==undefined){
+          findNewActive(e.key)
+          if (activeWordIndex==undefined) {
+            changeVar("errors",1)
+            missedShotAudio.cloneNode(true).play()
+            return
+          }
+        }
+        aw = currentWords[activeWordIndex]
+        if (e.key == aw.toType[0]){
+          aw.done +=  aw.toType[0]
+          aw.toType = aw.toType.substr(1, aw.toType.length)
+          shotAudio.cloneNode(true).play()
+          if (aw.toType.length == 0){
+            activeWordIndex = undefined
+            newRocket(aw)
+          }
+        } else {
+          changeVar("errors",1)
+          missedShotAudio.cloneNode(true).play()
+          aw.toType = aw.done + aw.toType
+          aw.done = ""
+          activeWordIndex = undefined
+          staticRocket.goal = undefined
+          rockets = rockets.filter(r => r.goal != aw)
+        }
       }
-    }
-    aw = currentWords[activeWordIndex]
-    if (e.key == aw.toType[0]){
-      aw.done +=  aw.toType[0]
-      aw.toType = aw.toType.substr(1, aw.toType.length)
-      shotAudio.cloneNode(true).play()
-      if (aw.toType.length == 0){
-        activeWordIndex = undefined
-        newRocket(aw)
-      }
-    } else {
-      changeVar("errors",1)
-      missedShotAudio.cloneNode(true).play()
-      aw.toType = aw.done + aw.toType
-      aw.done = ""
-      activeWordIndex = undefined
-      staticRocket.goal = undefined
-      rockets = rockets.filter(r => r.goal != aw)
-    }
   }
 }
 
@@ -381,7 +383,8 @@ function rocketHit(ro){
   const aw = ro.goal
   changeVar("score", aw.done.length)
   aw.removed = true
-  if (staticRocket.goal==aw) staticRocket.goal = undefined
+  if (staticRocket.goal==aw)
+    staticRocket.goal = undefined
   rockets = rockets.filter(r=> r != ro)
   ctx.font = fallingFont
   const awWidth = ctx.measureText(aw.done).width
@@ -481,7 +484,7 @@ function advancedDrawImage (img, x, y, w, h, spec){
 function moving(){
   ctx.font = fallingFont
   //move words
-  currentWords.forEach(cw => {
+  currentWords.forEach((cw, index) => {
     cw.y += settings.speed/2
     if (cw.y > canvas.height && !cw.removed){
       cw.removed = true
@@ -492,6 +495,10 @@ function moving(){
       const explWidth = Math.pow(missedWord.length, 1/3)*explWidthMultiplier
       newExplosion(cw.x + (wordWidth-explWidth)/2, "bottom", explWidth, "mushroom")
       largeExplosionAudio.cloneNode(true).play()
+      if (staticRocket.goal == cw)
+        staticRocket.goal = undefined
+      if (activeWordIndex==index)
+        activeWordIndex = undefined
       isGameOver()
     }
   })
@@ -543,14 +550,14 @@ function draw() {
   clouds.forEach(c => {
     advancedDrawImage(c.src, c.x, c.y, c.width, c.height, {a: c.opacity})
   })
+  //draw trees
+  trees.forEach(t => {
+    advancedDrawImage(t.src, t.x, t.y, t.width, t.height)
+  })
   //draw rockets
   advancedDrawImage(rocketImg, staticRocket.x, staticRocket.y, rocketWidth, rocketHeight, {r: staticRocket.r})
   rockets.forEach(ro => {
     advancedDrawImage(rocketImg, ro.x, ro.y, rocketWidth, rocketHeight, {r: ro.r})
-  })
-  //draw trees
-  trees.forEach(t => {
-    advancedDrawImage(t.src, t.x, t.y, t.width, t.height)
   })
   //draw rocket station
   ctx.fillStyle = getComputedStyle(canvas).getPropertyValue("--delftBlue")
