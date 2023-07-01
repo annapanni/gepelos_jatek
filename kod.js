@@ -1,5 +1,6 @@
 let gameRunning = false
 let wordTimeouts = []
+let newWordNum = 0
 let lastLetter = ""
 const globalVars = {
   score: 0,
@@ -52,6 +53,7 @@ function newWord() {
     y: 0,
     removed: false
   })
+  newWordNum += 1
 }
 
 function findNewActive(l){
@@ -94,6 +96,12 @@ function onKeyPress(e) {
       staticRocket.goal = undefined
       rockets = rockets.filter(r => r.goal != aw)
     }
+  }
+}
+
+function isGameOver(){
+  if (newWordNum == settings.wordsPerGame && currentWords.filter(w=> !w.removed).length == 0){
+    toggleGame()
   }
 }
 
@@ -461,6 +469,7 @@ function moving(){
       const explWidth = Math.pow(missedWord.length, 1/3)*explWidthMultiplier
       newExplosion(cw.x + (wordWidth-explWidth)/2, "bottom", explWidth, "mushroom")
       largeExplosionAudio.cloneNode(true).play()
+      isGameOver()
     }
   })
   //move rockets
@@ -480,6 +489,7 @@ function moving(){
     dist =  Math.sqrt(dx*dx + dy*dy)
     if (dist<20){
       rocketHit(ro)
+      isGameOver()
       return
     }
     ro.r =  Math.asin(dy/dist)
@@ -554,12 +564,14 @@ function initialize(){
   staticRocket.goal = undefined
   staticRocket.r = 1.5*Math.PI
   wordTimeouts = []
+  newWordNum = 0
 }
 function toggleGame() {
   if (gameRunning){
     for (let i=0; i<wordTimeouts.length; i++){
       clearTimeout(wordTimeouts[i])
     }
+    newWordNum = 0
     currentWords = []
     rockets = []
     gameRunning = false
