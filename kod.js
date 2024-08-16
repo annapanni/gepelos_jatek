@@ -409,7 +409,7 @@ function newCloud (starter=false){
     src: im,
     width: h*im.naturalWidth/im.naturalHeight,
     height: h,
-    x: (starter ? Math.random()*canvas.width : (left? 0 - h*im.naturalWidth/im.naturalHeight :canvas.width)),
+    x: (starter ? Math.random()*canvas.width : (left? 0 - h*im.naturalWidth/im.naturalHeight : canvas.width)),
     y: Math.pow(Math.random(),4)*canvas.height*0.95,
     speed: 0.05 + Math.random() * (left? 0.7:-0.7),
     opacity: 0.6 + Math.random()*0.4
@@ -569,6 +569,11 @@ function moving(){
 
 function draw() {
   ctx.clearRect(0,0, canvas.width, canvas.height)
+	//ground
+	ctx.fillStyle = "#5c4402"
+	ctx.fillRect(0, canvas.height-5, canvas.width, 5)
+	ctx.fillStyle = "#0f7d02"
+	ctx.fillRect(0, canvas.height-7, canvas.width, 2)
   //draw clouds
   clouds.forEach(c => {
     advancedDrawImage(c.src, c.x, c.y, c.width, c.height, {a: c.opacity})
